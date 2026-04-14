@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+TestResults/
+artifacts/
+
+*.user
+*.suo
+*.userprefs
+
+*.log
+*.tmp
+*.cache

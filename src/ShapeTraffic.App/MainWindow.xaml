@@ -1,0 +1,361 @@
+<Window x:Class="ShapeTraffic.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Title="ShapeTraffic"
+        Height="860"
+        Width="1620"
+        MinHeight="680"
+        MinWidth="1260"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <Border Background="{StaticResource WindowBackgroundBrush}" Padding="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="132" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border CornerRadius="6"
+                    Padding="8"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrushTheme}"
+                    BorderThickness="1">
+                <oxy:PlotView Model="{Binding TrafficPlotModel}" />
+            </Border>
+
+            <Border Grid.Row="2"
+                    CornerRadius="6"
+                    Padding="18,16,18,18"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrushTheme}"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <Border Margin="0,0,10,0"
+                                   Width="148"
+                                    Padding="12,8"
+                                    Background="{StaticResource SurfaceMutedBrush}"
+                                    BorderBrush="{StaticResource BorderBrushTheme}"
+                                    BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Text="Upload rate" />
+                                    <TextBlock Margin="0,3,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding CurrentUploadDisplay}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,0,10,0"
+                                   Width="148"
+                                    Padding="12,8"
+                                    Background="{StaticResource SurfaceMutedBrush}"
+                                    BorderBrush="{StaticResource BorderBrushTheme}"
+                                    BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Text="Download rate" />
+                                    <TextBlock Margin="0,3,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding CurrentDownloadDisplay}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,0,10,0"
+                                   Width="148"
+                                    Padding="12,8"
+                                    Background="{StaticResource SurfaceMutedBrush}"
+                                    BorderBrush="{StaticResource BorderBrushTheme}"
+                                    BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Text="Uploaded" />
+                                    <TextBlock Margin="0,3,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding AggregateUploadTotalDisplay}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,0,10,0"
+                                   Width="148"
+                                    Padding="12,8"
+                                    Background="{StaticResource SurfaceMutedBrush}"
+                                    BorderBrush="{StaticResource BorderBrushTheme}"
+                                    BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Text="Downloaded" />
+                                    <TextBlock Margin="0,3,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding AggregateDownloadTotalDisplay}" />
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <ComboBox Width="156"
+                                      Margin="0,0,10,0"
+                                      ItemsSource="{Binding TimeRanges}"
+                                      SelectedItem="{Binding SelectedTimeRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      DisplayMemberPath="Label" />
+
+                            <CheckBox Margin="0,0,0,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding HideProcessesWithoutTraffic, Mode=TwoWay}"
+                                      Content="Hide processes without traffic" />
+                        </StackPanel>
+                    </Grid>
+
+                    <DataGrid Grid.Row="1"
+                              Margin="0,16,0,0"
+                              ItemsSource="{Binding ProcessesView}"
+                              SelectedItem="{Binding SelectedProcess}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              CanUserSortColumns="True"
+                              CanUserResizeColumns="True"
+                              CanUserReorderColumns="True"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="None"
+                              RowHeaderWidth="0"
+                              RowHeight="64"
+                              ColumnHeaderHeight="40"
+                              Background="#1E1E1E"
+                              BorderThickness="0"
+                              RowBackground="#252526"
+                              AlternatingRowBackground="#2D2D30"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              HorizontalGridLinesBrush="#333337"
+                              VerticalGridLinesBrush="#333337"
+                              FrozenColumnCount="1"
+                              SelectionMode="Single"
+                              SelectionUnit="FullRow"
+                              ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#1F425B" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#1F425B" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#D4D4D4" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#D4D4D4" />
+
+                            <Style x:Key="DataGridBodyTextStyle" TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                            </Style>
+
+                            <Style x:Key="DataGridSecondaryTextStyle" TargetType="TextBlock" BasedOn="{StaticResource DataGridBodyTextStyle}">
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                            </Style>
+
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#2D2D30" />
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                <Setter Property="BorderBrush" Value="#3C3C3C" />
+                                <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                <Setter Property="Padding" Value="14,10" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                            </Style>
+
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="14,0" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="Transparent" />
+                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="DataGridCell">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Padding="{TemplateBinding Padding}"
+                                                    SnapsToDevicePixels="True">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                        <Setter Property="BorderBrush" Value="#1177BB" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="BorderBrush" Value="#333337" />
+                                <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#303033" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#1F425B" />
+                                        <Setter Property="BorderBrush" Value="#1177BB" />
+                                        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+
+                            <Style x:Key="ProcessLimitTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Setter Property="Background" Value="{StaticResource WindowBackgroundBrush}" />
+                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrushTheme}" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="BorderBrush" Value="#1177BB" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+
+                            <Style x:Key="DataGridEditorCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                                <Setter Property="Padding" Value="6,0" />
+                            </Style>
+
+                            <Style x:Key="ActionTrailingButtonStyle" TargetType="Button" BasedOn="{StaticResource CompactSecondaryButtonStyle}">
+                                <Setter Property="Margin" Value="0" />
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Process" Width="1.7*" SortMemberPath="ProcessName">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock FontWeight="SemiBold"
+                                                       Text="{Binding ProcessName}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding ProcessIdentityDisplay}" />
+                                                <Border Margin="10,0,0,0"
+                                                        Padding="8,2"
+                                                        CornerRadius="8"
+                                                        Background="#3C3C3C">
+                                                    <TextBlock x:Name="FlowStatusText" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Text="Idle" />
+                                                </Border>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding HasActiveFlows}" Value="True">
+                                                <Setter TargetName="FlowStatusText" Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                                                <Setter TargetName="FlowStatusText" Property="Text" Value="Active" />
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Download"
+                                                Binding="{Binding DownloadRateDisplay}"
+                                                Width="120"
+                                                SortMemberPath="DownloadBytesPerSecond"
+                                                ElementStyle="{StaticResource DataGridBodyTextStyle}" />
+
+                            <DataGridTextColumn Header="Upload"
+                                                Binding="{Binding UploadRateDisplay}"
+                                                Width="120"
+                                                SortMemberPath="UploadBytesPerSecond"
+                                                ElementStyle="{StaticResource DataGridBodyTextStyle}" />
+
+                            <DataGridTemplateColumn Header="Download limit (MB/s)" Width="180" SortMemberPath="DownloadLimitBytesPerSecond">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <StaticResource ResourceKey="DataGridEditorCellStyle" />
+                                </DataGridTemplateColumn.CellStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Style="{StaticResource ProcessLimitTextBoxStyle}"
+                                                 Tag="ProcessTableEditorElement"
+                                                 GotKeyboardFocus="ProcessTableEditorElement_OnGotKeyboardFocus"
+                                                 LostKeyboardFocus="ProcessTableEditorElement_OnLostKeyboardFocus"
+                                                 HorizontalAlignment="Stretch"
+                                                 Text="{Binding DownloadLimitInput, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Upload limit (MB/s)" Width="180" SortMemberPath="UploadLimitBytesPerSecond">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <StaticResource ResourceKey="DataGridEditorCellStyle" />
+                                </DataGridTemplateColumn.CellStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Style="{StaticResource ProcessLimitTextBoxStyle}"
+                                                 Tag="ProcessTableEditorElement"
+                                                 GotKeyboardFocus="ProcessTableEditorElement_OnGotKeyboardFocus"
+                                                 LostKeyboardFocus="ProcessTableEditorElement_OnLostKeyboardFocus"
+                                                 HorizontalAlignment="Stretch"
+                                                 Text="{Binding UploadLimitInput, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Apply" Width="138">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <StaticResource ResourceKey="DataGridEditorCellStyle" />
+                                </DataGridTemplateColumn.CellStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Style="{StaticResource CompactButtonStyle}"
+                                                    Tag="ProcessTableEditorElement"
+                                                    GotKeyboardFocus="ProcessTableEditorElement_OnGotKeyboardFocus"
+                                                    LostKeyboardFocus="ProcessTableEditorElement_OnLostKeyboardFocus"
+                                                    Click="ProcessLimitAction_OnClick"
+                                                    Command="{Binding DataContext.SaveRowLimitsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Content="Apply" />
+                                                <Button Style="{StaticResource ActionTrailingButtonStyle}"
+                                                    Tag="ProcessTableEditorElement"
+                                                    GotKeyboardFocus="ProcessTableEditorElement_OnGotKeyboardFocus"
+                                                    LostKeyboardFocus="ProcessTableEditorElement_OnLostKeyboardFocus"
+                                                    Click="ProcessLimitAction_OnClick"
+                                                    Command="{Binding DataContext.ClearRowLimitsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Content="Clear" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Path" Width="2.3*" SortMemberPath="ExecutablePath">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   Text="{Binding ExecutablePath}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

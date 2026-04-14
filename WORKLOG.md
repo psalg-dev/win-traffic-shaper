@@ -1,0 +1,65 @@
+# ShapeTraffic Worklog
+
+- [x] Confirm target constraints for Windows 11, WPF, WinDivert, and elevation.
+- [x] Scaffold the .NET solution, projects, and package baseline.
+- [x] Implement core traffic models, pacing, and controller abstractions.
+- [x] Implement SQLite persistence for rules and aggregate history.
+- [x] Implement WinDivert packet capture, flow tracking, and per-process shaping.
+- [x] Build the WPF dashboard for process traffic, limits, and history curves.
+- [x] Add structured file logging and startup diagnostics.
+- [x] Add unit tests for pacing and repository behavior.
+- [x] Add end-to-end tests and a local traffic lab harness.
+- [x] Run verification and document runtime constraints for live shaping.
+- [x] Rework the process table refresh/styling so limit editors keep focus during live updates.
+- [x] Interpret upload/download editor inputs as MB/s and accept both `,` and `.` decimal separators.
+- [x] Rework the desktop shell to use a VS Code-like dark window chrome and compact header.
+- [x] Move aggregate traffic stats and time-range controls into the processes section header.
+- [x] Tighten process-row vertical alignment and reduce chart height.
+- [x] Fix the header aggregate upload/download cards to a consistent width.
+- [x] Make process table cell content honor the same horizontal padding as the column headers.
+- [x] Align input/editor columns with headers and stop the Apply column from clipping.
+- [x] Move aggregate uploaded/downloaded totals into the processes header cards and fix the time-range selector binding.
+- [x] Split live-rate and aggregate-total stats into separate header cards for a cleaner processes toolbar.
+- [x] Add a default-on toggle to hide process rows without current traffic.
+- [x] Restore the default ComboBox template so the time interval dropdown opens reliably again.
+- [x] Darken the default ComboBox popup and item states so the time interval list is readable.
+- [x] Replace the ComboBox chrome template so the closed time interval control no longer renders white.
+- [x] Remove the Processes/status labels and left-align the header metrics and controls.
+- [x] Remove the Refresh button from the processes header toolbar.
+- [x] Fix the hide-idle process filter so rows with nonzero traffic stay visible even when flow flags lag.
+- [x] Keep the processes table vertical scrollbar visible so the layout does not jump as rows appear.
+- [x] Move the time-range dropdown and hide-idle toggle to the right side of the processes header.
+
+## Verification Notes
+
+- `dotnet build ShapeTraffic.sln` passes.
+- `runTests` passes with 5/5 tests.
+- Manual traffic lab run succeeded: a 1 MiB download at `--limit-kbps 256` completed in `4.01s` and a 1 MiB upload at `--limit-kbps 256` completed in `4.01s`, both measuring `2.09 Mbps`.
+- Launching `ShapeTraffic.App` from this non-elevated VS Code session fails with Win32 error 740 as expected because the app manifest requires administrator privileges.
+- Startup now has explicit fatal exception handlers and log-backed error dialogs instead of silent WPF crashes.
+- The desktop UI now uses a VS Code-like dark theme and puts upload/download limit inputs directly into each process row for faster shaping.
+- The process table no longer forces a collection view refresh on every snapshot, which keeps the limit TextBoxes stable during live updates while live sorting continues to reorder rows.
+- The process table selection and in-grid editors now stay on the dark theme instead of falling back to the default white WPF selection background.
+- Upload and download limit editors now treat entered values as MB/s, and both `1.5` and `1,5` parse to the same applied rate.
+- The top summary card was removed; aggregate upload/download rates, the time-range picker, and refresh action now live in the processes header, and the traffic chart height was reduced to a compact strip.
+- The chart strip was tuned slightly taller after the compact restyle so the plot remains readable without bringing back the oversized header layout.
+- The limit columns now show only the textbox editor; the redundant `Applied Unlimited` helper label was removed, and applied per-process limits stay visible directly in the input value.
+- The process-row Apply/Clear controls now keep the table in editor mode until the action completes, which prevents the first click from getting lost during a refresh and stops the focused cell from shifting by holding border thickness constant.
+- Packet-rate sampling now measures bytes when packets are actually reinjected, scales by the real sample interval, and gives unresolved flows a short attribution grace period before falling back to Unclassified traffic.
+- Packet attribution now falls back to the Windows TCP/UDP owner tables when WinDivert flow events are missing or late, which should catch browser traffic such as Brave/QUIC instead of leaving it under Unclassified traffic.
+- Process snapshots are now aggregated by executable/process key before they reach the UI, so multi-process apps such as Chromium-based browsers show one combined row instead of having sibling PIDs overwrite each other.
+- The WPF shell now applies a darker VS Code-like palette across the window background, buttons, and ComboBox template, and also requests a dark native caption/title bar through DWM so the window chrome no longer stays white.
+- `dotnet build ShapeTraffic.sln` passes after the header cleanup, and `dotnet test ShapeTraffic.sln` passes with 21/21 tests.
+- Process table body cells now use an explicit `DataGridCell` control template that applies the configured `Padding`, which keeps row content aligned with the padded column headers.
+- The per-row limit editor columns now use tighter cell padding plus full-width TextBoxes so entered values line up with the headers, and the Apply/Clear action pair now fits within its column without clipping.
+- The Uploaded/Downloaded table columns were removed, aggregate totals now live next to the live upload/download rates in the processes header, and the time-range ComboBox now explicitly pushes selection changes back into `SelectedTimeRange`.
+- The header stats now use four separate cards for upload rate, download rate, uploaded total, and downloaded total, and `TimeRangeChoice.ToString()` returns the label so the ComboBox selection text stays clean with the custom template.
+- The processes header now includes a default-on toggle to hide rows without current traffic, implemented as a collection-view filter keyed off `HasActiveFlows` so idle rows can be shown again on demand without changing the backing snapshot set.
+- The shared ComboBox style now relies on WPF's built-in control template again, keeping only the dark brush/spacing setters so the time interval dropdown opens reliably.
+- The shared ComboBox style now overrides the default popup system brushes and uses dark item backgrounds so the time interval dropdown remains readable without reintroducing custom template issues.
+- The time interval ComboBox now uses a simple dark toggle-backed template for its closed state while keeping the working popup list styling, which removes the remaining white control chrome.
+- The processes header no longer shows the Processes or traffic-engine status labels, and the live/aggregate stat cards now sit on the left alongside the time-range and refresh controls.
+- The processes header toolbar now omits the Refresh button, leaving only the stat cards, time-range selector, and hide-idle toggle.
+- Process snapshots and row view models now treat nonzero upload/download rates as active traffic for the hide-idle filter, with regression tests covering grouped snapshots and stale flow flags.
+- The processes DataGrid now keeps its vertical scrollbar gutter visible at all times so column widths do not shift when the process list starts overflowing.
+- The processes header now uses left and right groups again: stat cards stay on the left, while the time-range selector and hide-idle toggle are aligned to the right.
